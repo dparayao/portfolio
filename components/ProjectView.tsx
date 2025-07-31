@@ -4,6 +4,7 @@ import { Project } from '../context/ProjectProvider';
 import NotFound from './NotFound';
 import ProjectImage from './ProjectImage';
 import DocumentField from './DocumentField';
+import PortfolioHeader from './PortfolioHeader';
 
 type ProjectViewProps = {
   projectSlug: string;
@@ -13,7 +14,7 @@ type ProjectViewProps = {
 const ProjectView: React.FC<ProjectViewProps> = ({ projectSlug, project }) => {
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
   const [showInspiration, setShowInspiration] = useState(false);
-  const [inspirationMode, setInspirationMode] = useState<'design' | 'development'>('design');
+  const [inspirationMode, setInspirationMode] = useState<'design' | 'development' | 'demo'>('design');
 
   if (!project) {
     return <NotFound />
@@ -21,10 +22,7 @@ const ProjectView: React.FC<ProjectViewProps> = ({ projectSlug, project }) => {
 
   const {
     title,
-    category,
     techStack,
-    projectUrl,
-    githubUrl,
     demoMedia,
     inspirationMedia,
     developmentProcess,
@@ -46,7 +44,7 @@ const ProjectView: React.FC<ProjectViewProps> = ({ projectSlug, project }) => {
     setCurrentMediaIndex((prevIndex) => Math.max(0, prevIndex - 1));
   };
 
-  const toggleInspiration = (mode: 'design' | 'development') => {
+  const toggleInspiration = (mode: 'design' | 'development' | 'demo') => {
     setInspirationMode(mode);
     setShowInspiration(true);
   };
@@ -55,52 +53,47 @@ const ProjectView: React.FC<ProjectViewProps> = ({ projectSlug, project }) => {
     setShowInspiration(false);
   };
 
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    // Close overlay when clicking the background
+    if (e.target === e.currentTarget) {
+      closeInspiration();
+    }
+  };
+
+  const handleContentClick = (e: React.MouseEvent) => {
+    // Prevent clicks inside content from closing the overlay
+    e.stopPropagation();
+  };
+
   return (
     <>
-        <MainBottomContainer>
+    <PortfolioHeader></PortfolioHeader>
+    <MainBottomContainer>
       <MainContent>
-        <ImageSection>
-          {hasDemo ? (
-            <MainImageContainer>
-              <ProjectImage 
-                src={demoMedia[currentMediaIndex].file.url}
-                alt={demoMedia[currentMediaIndex].altText || title}
-              />
-              <ImageOverlay>
-                <InspButton onClick={() => toggleInspiration('design')}>
-                  insp + design
-                </InspButton>
-              </ImageOverlay>
-              {demoMedia.length > 1 && (
-                <>
-                  <NavButton left onClick={prevMedia} disabled={currentMediaIndex === 0}>
-                    ←
-                  </NavButton>
-                  <NavButton right onClick={nextMedia} disabled={currentMediaIndex === demoMedia.length - 1}>
-                    →
-                  </NavButton>
-                </>
-              )}
-            </MainImageContainer>
-          ) : (
-            <NoImagePlaceholder>No demo available</NoImagePlaceholder>
-          )}
-        </ImageSection>
+  
+        <OverlayHeader>
+          <HeaderLeft></HeaderLeft>
+          <HeaderRight>
+            <BackHomeButton href="/">BACK</BackHomeButton>
+          </HeaderRight>
+        </OverlayHeader>
 
         <InfoSection>
-          <InfoBox>
-            <InfoText>click the elements to learn more about the project!</InfoText>
+          <LayeredContainer>
+            {/* Background images with z-index 1 */}
+            <ImageContainer>
+              <SquareImage imageUrl={hasInspiration ? inspirationMedia[currentMediaIndex]?.file?.url : undefined} className="image1" />
+              <SquareImage imageUrl={hasDemo ? demoMedia[currentMediaIndex]?.file?.url : undefined} className="image2" />
+            </ImageContainer>
             
+            {/* Button overlay with z-index 10 */}
             <ButtonContainer>
-              <InfoButton onClick={() => toggleInspiration('development')}>
-                development<br />process
-              </InfoButton>
-              <InfoButton onClick={() => toggleInspiration('design')}>
-                demo videos !
-              </InfoButton>
+              <ControlButton className="insp-btn" onClick={() => toggleInspiration('design')}>insp + design</ControlButton>
+              <HelpText className="desc-text">click the elements to learn more about the project!</HelpText>
+              <ControlButton className="demo-btn" onClick={() => toggleInspiration('demo')}>demo videos !</ControlButton>
+              <ControlButton className="develop-btn" onClick={() => toggleInspiration('development')}>development process</ControlButton>
             </ButtonContainer>
-        
-          </InfoBox>
+          </LayeredContainer>
         </InfoSection>
       </MainContent>
 
@@ -112,52 +105,43 @@ const ProjectView: React.FC<ProjectViewProps> = ({ projectSlug, project }) => {
 
       {/* Inspiration Overlay */}
       {showInspiration && (
-        <OverlayContainer>
-          <OverlayContent>
-            <OverlayHeader>
-              <HeaderLeft>Now playing: Attention - New Jeans</HeaderLeft>
-              <HeaderRight>
-                <HomeButton href="/">Home</HomeButton>
-              </HeaderRight>
-            </OverlayHeader>
-            
-            <OverlayMain>
-              {/* Left Side - Images */}
-              <OverlayImages>
-                {inspirationMode === 'design' && hasInspiration ? (
-                  inspirationMedia.slice(0, 3).map((media, index) => (
-                    <OverlayImage key={media.id}>
-                      <img src={media.file.url} alt={media.altText || title} />
+        <OverlayContainer onClick={handleOverlayClick}>
+          <OverlayContent onClick={handleContentClick} mode={inspirationMode}>
+            <OverlayMain mode={inspirationMode}>
+              {(inspirationMode === 'design' || inspirationMode === 'demo') && (
+                <OverlayImages>
+                  {inspirationMode === 'design' && hasInspiration ? (
+                    inspirationMedia.slice(0, 3).map((media, index) => (
+                      <OverlayImage key={media.id}>
+                        <img src={media.file.url} alt={media.altText || title} />
+                      </OverlayImage>
+                    ))
+                  ) : inspirationMode === 'demo' && hasDemo ? (
+                    demoMedia.slice(0, 3).map((media, index) => (
+                      <OverlayImage key={media.id}>
+                        <img src={media.file.url} alt={media.altText || title} />
+                      </OverlayImage>
+                    ))
+                  ) : (
+                    <OverlayImage>
+                      <div>No images available</div>
                     </OverlayImage>
-                  ))
-                ) : hasDemo ? (
-                  demoMedia.slice(0, 3).map((media, index) => (
-                    <OverlayImage key={media.id}>
-                      <img src={media.file.url} alt={media.altText || title} />
-                    </OverlayImage>
-                  ))
-                ) : (
-                  <OverlayImage>
-                    <div>No images available</div>
-                  </OverlayImage>
-                )}
-              </OverlayImages>
-
-              {/* Right Side - Text Content */}
-              <OverlayTextArea>
-                {inspirationMode === 'design' && designInspiration?.document ? (
-                  <DocumentField document={designInspiration.document} />
-                ) : inspirationMode === 'development' && developmentProcess?.document ? (
-                  <DocumentField document={developmentProcess.document} />
-                ) : (
-                  <div>No content available for {inspirationMode}</div>
-                )}
-              </OverlayTextArea>
+                  )}
+                </OverlayImages>
+              )}
+              
+              {(inspirationMode === 'design' || inspirationMode === 'development') && (
+                <OverlayTextArea>
+                  {inspirationMode === 'design' && designInspiration?.document ? (
+                    <DocumentField document={designInspiration.document} />
+                  ) : inspirationMode === 'development' && developmentProcess?.document ? (
+                    <DocumentField document={developmentProcess.document} />
+                  ) : (
+                    <div>No content available for {inspirationMode}</div>
+                  )}
+                </OverlayTextArea>
+              )}
             </OverlayMain>
-
-            <BackButton onClick={closeInspiration}>
-              BACK
-            </BackButton>
           </OverlayContent>
         </OverlayContainer>
       )}
@@ -168,74 +152,19 @@ const ProjectView: React.FC<ProjectViewProps> = ({ projectSlug, project }) => {
 // Styled Components
 const MainBottomContainer = styled.div`
   display: grid;
-  grid-template-rows: 90%;
+  grid-template-rows: 80% 20%;
+  width: 45%;
+  margin: auto;
+  margin-top: 3%;
+  padding: 0% 2% 2% 2%;
+  background:rgb(246, 246, 246);
+  border: .3rem solid #73899D;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.49);
 `;
 
 const MainContent = styled.div`
-  background: #e8e8e8;
-`;
-
-const ImageSection = styled.div`
-  position: relative;
-`;
-
-const MainImageContainer = styled.div`
-  position: relative;
-  border: 2px solid #666;
-  overflow: hidden;
-  
-  img {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-`;
-
-const ImageOverlay = styled.div`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-`;
-
-const InspButton = styled.button`
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid #666;
-  padding: 0.5rem;
-  font-size: 0.8rem;
-  cursor: pointer;
-  
-  &:hover {
-    background: rgba(255, 255, 255, 1);
-  }
-`;
-
-const NavButton = styled.button<{ left?: boolean; right?: boolean }>`
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  ${props => props.left ? 'left: 10px;' : ''}
-  ${props => props.right ? 'right: 10px;' : ''}
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  border: none;
-  width: 30px;
-  height: 30px;
-  cursor: pointer;
-  
-  &:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-  }
-`;
-
-const NoImagePlaceholder = styled.div`
-  height: 200px;
-  background: #ddd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid #666;
-  color: #666;
+  padding-left: 4%;
+  padding-right: 4%;
 `;
 
 const InfoSection = styled.div`
@@ -243,61 +172,144 @@ const InfoSection = styled.div`
   flex-direction: column;
 `;
 
-const InfoBox = styled.div`
-  background: #f5f5f5;
-  border: 2px inset #f5f5f5;
-  padding: 1rem;
-  height: 100%;
+const LayeredContainer = styled.div`
+  position: relative;
+  width: 100%;
+  height: 40vh;
 `;
 
-const InfoText = styled.p`
-  font-size: 0.9rem;
-  margin-bottom: 1.5rem;
-  color: #333;
+const ImageContainer = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 115%;
+  display: grid;
+  grid-template-columns: 50% 50%;
+  z-index: 1;
 `;
 
-const ButtonContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-`;
-
-const InfoButton = styled.button`
-  background: #b8c8d8;
-  border: 2px outset #b8c8d8;
-  padding: 0.75rem;
-  font-size: 0.8rem;
-  cursor: pointer;
-  text-align: left;
+const SquareImage = styled.div<{ imageUrl?: string }>`
+  aspect-ratio: 1 / 1;
+  background-color: #d0d0d0;
+  background-image: url(${props => props.imageUrl || 'none'});
+  background-size: cover;
+  background-position: center;
+  transition: all 0.3s ease;
   
-  &:hover {
-    background: #a8b8c8;
+  /* Loading state when no image */
+  ${props => !props.imageUrl && `
+    background-image: radial-gradient(circle, #999 2px, transparent 2px);
+    &::after {
+      content: "Loading...";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #666;
+      font-size: 12px;
+      font-weight: bold;
+    }
+  `}
+  
+  /* Image 1 - top left corner */
+  &.image1 {
+    width: 18vw;
+    height: 14vw;
+    align-self: start;
+    justify-self: start;
+  }
+  
+  /* Image 2 - bottom right corner */
+  &.image2 {
+    width: 18vw;
+    height: 13vw;
+    align-self: end;
+    justify-self: end;
+  }
+  
+  ${LayeredContainer}:has(.insp-btn:hover) &.image1 {
+    transform: translateY(-1px);
+    box-shadow: 0 0 15px 5px rgba(184, 225, 240, 0.7);
+  }
+  ${LayeredContainer}:has(.demo-btn:hover) &.image2 {
+    transform: translateY(-1px);
+    box-shadow: 0 0 15px 5px rgba(184, 225, 240, 0.7);
   }
 `;
 
+const ButtonContainer = styled.div`
+  position: absolute;
+  top: 58%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: grid;
+  grid-template-areas: 
+    "insp insp desc"
+    "develop demo demo";
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+  height: 115%;
+  z-index: 10;
+`;
+
+const ControlButton = styled.button`
+  background: #B0D1DF;
+  cursor: pointer;
+  font-size: 1.3rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  padding: 5%;
+  transition: all 0.2s ease;
+  border: none;
+  color: #3B3E42;
+  
+  &:hover {
+    background: #A8CDDD;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+  
+  /* Grid area assignments */
+  &.insp-btn { grid-area: insp; height: 40%; width: 50%; margin-top: auto; margin-left: auto; margin-bottom: auto;}
+  &.develop-btn { grid-area: develop; height: 60%; width: 80%; margin-top: auto; text-align: left;}
+  &.demo-btn { grid-area: demo;  width: 60%; height: 40%; margin: auto;}
+`;
+
+const HelpText = styled.div`
+  grid-area: desc;
+  display: flex;
+  font-size: .8rem;
+  color: #3B3E42;
+  text-align: right;
+  font-style: italic;
+`;
+
 const BottomInfo = styled.div`
-  max-width: 800px;
-  margin: 0 auto;
-  background: #e8e8e8;
-  border: 3px inset #e8e8e8;
-  padding: 1rem 1.5rem;
+  display: grid;
+  grid-template-rows: 60%;
 `;
 
 const ProjectTitle = styled.h1`
-  font-size: 1.5rem;
-  margin: 0 0 0.5rem 0;
-  color: #333;
+  font-size: 2rem;
+  color: #3B3E42;
   font-weight: bold;
+  text-shadow: -2px 1px rgb(171, 199, 232);
 `;
 
 const TechStackText = styled.p`
-  margin: 0;
-  color: #333;
+  color: #3B3E42;
   font-size: 0.9rem;
 `;
 
-// Overlay Styles (keep header for modal)
+// Overlay Styles
 const OverlayContainer = styled.div`
   position: fixed;
   top: 0;
@@ -309,25 +321,33 @@ const OverlayContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 `;
 
-const OverlayContent = styled.div`
-  width: 90%;
-  max-width: 1000px;
-  height: 80%;
-  background: #f0f0f0;
-  border: 3px outset #f0f0f0;
+const OverlayContent = styled.div<{ mode: string }>`
+  width: ${props => 
+    props.mode === 'demo' ? '80%' : 
+    props.mode === 'development' ? '80%' : 
+    '90%'};
+  max-width: ${props => 
+    props.mode === 'demo' ? '30%' : 
+    props.mode === 'development' ? '800px' : 
+    '1000px'};
+  height: ${props => 
+    props.mode === 'demo' ? '100%' : 
+    props.mode === 'development' ? '70%' : 
+    '80%'};
   display: flex;
   flex-direction: column;
+  cursor: default;
 `;
 
 const OverlayHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #d0d8e0;
-  padding: 0.5rem 1rem;
-  border-bottom: 2px solid #999;
+  padding: 1%;
+  width: 105%;
 `;
 
 const HeaderLeft = styled.div`
@@ -337,41 +357,31 @@ const HeaderLeft = styled.div`
 
 const HeaderRight = styled.div``;
 
-const HomeButton = styled.a`
-  background: #c0c8d0;
-  border: 2px outset #c0c8d0;
+const BackHomeButton = styled.a`
   padding: 0.25rem 0.75rem;
   text-decoration: none;
   color: #333;
   font-size: 0.8rem;
   cursor: pointer;
-  
-  &:hover {
-    background: #b0b8c0;
-  }
 `;
 
-const OverlayMain = styled.div`
+const OverlayMain = styled.div<{ mode: string }>`
   flex: 1;
   display: grid;
-  grid-template-columns: 300px 1fr;
-  background-image: 
-    linear-gradient(rgba(0,0,0,.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,0,0,.1) 1px, transparent 1px);
-  background-size: 20px 20px;
+  grid-template-columns: ${props => 
+    props.mode === 'demo' ? '1fr' : 
+    props.mode === 'development' ? '1fr' : 
+    '300px 1fr'};
+  height: 50%;
 `;
-
 const OverlayImages = styled.div`
   padding: 1rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  background: #d8d8d8;
-  border-right: 2px solid #999;
 `;
 
 const OverlayImage = styled.div`
-  border: 2px solid #666;
   background: white;
   
   img {
@@ -393,21 +403,30 @@ const OverlayTextArea = styled.div`
   overflow-y: auto;
   font-size: 0.9rem;
   line-height: 1.6;
-`;
 
-const BackButton = styled.button`
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: #c0c8d0;
-  border: 2px outset #c0c8d0;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  font-size: 0.8rem;
-  
-  &:hover {
-    background: #b0b8c0;
+  /* Custom scrollbar styling to match the background */
+  &::-webkit-scrollbar {
+    width: 12px;
   }
+
+  &::-webkit-scrollbar-track {
+    background: #c8dae8;
+    border-radius: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #8bb3cc;
+    border-radius: 6px;
+    border: 2px solid #c8dae8;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #7aa3bb;
+  }
+
+  /* Firefox scrollbar styling */
+  scrollbar-width: thin;
+  scrollbar-color: #8bb3cc #c8dae8;
 `;
 
 export default ProjectView;

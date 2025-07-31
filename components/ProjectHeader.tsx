@@ -1,25 +1,28 @@
 import React from 'react';
 import styled from 'styled-components';
 import PortfolioHeader from './PortfolioHeader';
-import ProjectBack from './ProjectBack';
 
-const ProjectHeader: React.FC = () => {
+interface ProjectHeaderProps {
+  projectTitle?: string;
+}
+
+const ProjectHeader: React.FC<ProjectHeaderProps> = ({ projectTitle }) => {
+  const nowPlayingText = projectTitle 
+    ? `Now viewing: ${projectTitle}` 
+    : "Now viewing: Project Details";
+
   return (
     <Container>
-      <PortfolioHeader />
-      <BackContainer>
-        <ProjectBack />
-      </BackContainer>
+      <PortfolioHeader 
+        nowPlaying={nowPlayingText}
+        showNavigation={false}
+      />
     </Container>
   );
 };
 
 const Container = styled.div`
   margin-bottom: 2rem;
-`;
-
-const BackContainer = styled.div`
-  padding: 1rem 2rem;
 `;
 
 export default ProjectHeader;

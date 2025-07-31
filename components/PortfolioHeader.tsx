@@ -2,17 +2,29 @@ import React from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 
-const PortfolioHeader: React.FC = () => {
+interface PortfolioHeaderProps {
+  nowPlaying?: string;
+  showNavigation?: boolean;
+}
+
+const PortfolioHeader: React.FC<PortfolioHeaderProps> = ({ 
+  nowPlaying = "Now playing: Creative Portfolio Showcase",
+  showNavigation = true 
+}) => {
   return (
     <HeaderContainer>
-      <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-        <Title>Portfolio</Title>
-      </Link>
-      <Navigation>
-        <NavLink href="/">Home</NavLink>
-        <NavLink href="/about">About</NavLink>
-        <NavLink href="/contact">Contact</NavLink>
-      </Navigation>
+      <HeaderLeft>{nowPlaying}</HeaderLeft>
+      <HeaderRight>
+        {showNavigation ? (
+          <Navigation>
+            <NavButton href="/">Home</NavButton>
+            <NavButton href="/about">About</NavButton>
+            <NavButton href="/contact">Contact</NavButton>
+          </Navigation>
+        ) : (
+          <NavButton href="/">Home</NavButton>
+        )}
+      </HeaderRight>
     </HeaderContainer>
   );
 };
@@ -21,29 +33,43 @@ const HeaderContainer = styled.header`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 2rem;
-  border-bottom: 1px solid #e0e0e0;
+  background: #d0d8e0;
+  padding: 0.5rem 1rem;
+  border-bottom: 2px solid #999;
+  font-family: 'Courier New', monospace;
 `;
 
-const Title = styled.h1`
-  font-size: 2rem;
-  margin: 0;
-  cursor: pointer;
+const HeaderLeft = styled.div`
+  font-size: 0.9rem;
+  color: #333;
+`;
+
+const HeaderRight = styled.div`
+  display: flex;
+  gap: 0.5rem;
 `;
 
 const Navigation = styled.nav`
   display: flex;
-  gap: 2rem;
+  gap: 0.5rem;
 `;
 
-const NavLink = styled.a`
+const NavButton = styled.a`
+  background: #c0c8d0;
+  border: 2px outset #c0c8d0;
+  padding: 0.25rem 0.75rem;
   text-decoration: none;
   color: #333;
-  font-weight: 500;
-  transition: color 0.2s ease;
+  font-size: 0.8rem;
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
   
   &:hover {
-    color: #0066cc;
+    background: #b0b8c0;
+  }
+  
+  &:active {
+    border-style: inset;
   }
 `;
 

@@ -24,7 +24,7 @@ const ImageContainer = styled.div`
 `;
 
 const Image = styled.img`
-  max-width: 100%;
+  max-width: 60%;
   max-height: 60vh;
   object-fit: contain;
   border-radius: 4px;

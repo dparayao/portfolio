@@ -16,6 +16,50 @@
   }
 }
 
+/* globals.css */
+* {
+  box-sizing: border-box;
+}
+
 body {
-  background-color: rgb(255, 253, 235)
+  margin: 0;
+  padding: 0;
+  font-family: 'Courier New', monospace;
+  background: #f0f0f0;
+  background-image: 
+    linear-gradient(rgba(0,0,0,.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+  color: #333;
+}
+
+/* Universal retro button style */
+button, .retro-button {
+  font-family: 'Courier New', monospace;
+  background: #c0c8d0;
+  border: 2px outset #c0c8d0;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  color: #333;
+}
+
+button:hover, .retro-button:hover {
+  background: #b0b8c0;
+}
+
+button:active, .retro-button:active {
+  border-style: inset;
+}
+
+/* Universal retro container style */
+.retro-panel {
+  background: #e8f0f8;
+  border: 2px outset #c0c8d0;
+  padding: 1rem;
+}
+
+.retro-inset {
+  border: 2px inset #c0c8d0;
+  background: #f8f8f8;
+  padding: 1rem;
 }

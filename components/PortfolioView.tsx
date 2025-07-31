@@ -10,13 +10,17 @@ interface PortfolioViewProps {
 const PortfolioView: React.FC<PortfolioViewProps> = ({ projects }) => {
   if (projects === undefined) {
     console.log("projects undefined");
-    return <div>Loading projects...</div>;
+    return (
+        <div>Loading projects...</div>
+    );
   }
 
   const projectEntries = Object.entries(projects);
   
   if (projectEntries.length === 0) {
-    return <EmptyState>No projects found</EmptyState>;
+    return (
+        <EmptyState>No projects found</EmptyState>
+    );
   }
 
   const listProjects = projectEntries.map(([slug, project], index) => (
@@ -26,16 +30,16 @@ const PortfolioView: React.FC<PortfolioViewProps> = ({ projects }) => {
   ));
 
   return (
-    <PortfolioContainer>
-      <ProjectsGrid>{listProjects}</ProjectsGrid>
-    </PortfolioContainer>
+      <PortfolioContainer>
+        <ProjectsGrid>{listProjects}</ProjectsGrid>
+      </PortfolioContainer>
   );
 };
 
 // Styled Components
 const PortfolioContainer = styled.div`
   min-height: 100vh;
-  padding: 2rem;
+  padding: 5%;
 `;
 
 const ProjectsGrid = styled.div`

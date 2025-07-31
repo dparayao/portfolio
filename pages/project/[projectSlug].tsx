@@ -41,7 +41,7 @@ const ProjectPage: React.FC<ProjectPageProps> = ({ project }) => {
   }
 
   return (
-    <div style={{ padding: 10, position: 'relative' }}>
+    <div style={{ position: 'relative' }}>
       <ProjectView projectSlug={projectSlug} project={project}/>
     </div>
   );
