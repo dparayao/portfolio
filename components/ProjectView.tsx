@@ -160,6 +160,12 @@ const MainBottomContainer = styled.div`
   background:rgb(246, 246, 246);
   border: .3rem solid #73899D;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.49);
+
+  /* Tablet adjustments */
+  @media (max-width: 650px) {
+    width: 80%;
+    grid-template-rows: 60% 40%;
+  }
 `;
 
 const MainContent = styled.div`
@@ -215,17 +221,29 @@ const SquareImage = styled.div<{ imageUrl?: string }>`
   /* Image 1 - top left corner */
   &.image1 {
     width: 18vw;
-    height: 14vw;
+    height: 18vw;
     align-self: start;
     justify-self: start;
+
+    /* Tablet adjustments */
+    @media (max-width: 650px) {
+      width: 27vw;
+      height: 20vw;
+    }
   }
   
   /* Image 2 - bottom right corner */
   &.image2 {
     width: 18vw;
-    height: 13vw;
+    height: 18vw;
     align-self: end;
     justify-self: end;
+
+    /* Tablet adjustments */
+    @media (max-width: 650px) {
+      width: 28vw;
+      height: 24vw;
+    }
   }
   
   ${LayeredContainer}:has(.insp-btn:hover) &.image1 {
@@ -247,26 +265,36 @@ const ButtonContainer = styled.div`
   grid-template-areas: 
     "insp insp desc"
     "develop demo demo";
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  gap: 10px;
+  grid-template-columns: minmax(90px, 1fr) minmax(90px, 1fr) minmax(70px, 1fr);
+  grid-template-rows: auto auto;
+  align-items: stretch;
   width: 100%;
   height: 115%;
   z-index: 10;
+
+  /* Tablet adjustments */
+  @media (max-width: 650px) {
+    height: 120%;
+  }
+  
+  /* Mobile adjustments */
+  @media (max-width: 450px) {
+  }
 `;
 
 const ControlButton = styled.button`
   background: #B0D1DF;
   cursor: pointer;
-  font-size: 1.3rem;
+  font-size: clamp(.5rem, 2.5vw, 1.3rem);
   font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: left;
-  padding: 5%;
+  padding: clamp(3%, 1vw, 5%);
   transition: all 0.2s ease;
   border: none;
   color: #3B3E42;
+  min-height: 20px;
   
   &:hover {
     background: #A8CDDD;
@@ -277,10 +305,25 @@ const ControlButton = styled.button`
     transform: translateY(0);
   }
   
-  /* Grid area assignments */
-  &.insp-btn { grid-area: insp; height: 40%; width: 50%; margin-top: auto; margin-left: auto; margin-bottom: auto;}
-  &.develop-btn { grid-area: develop; height: 60%; width: 80%; margin-top: auto; text-align: left;}
-  &.demo-btn { grid-area: demo;  width: 60%; height: 40%; margin: auto;}
+  &.insp-btn { 
+    grid-area: insp; 
+    height: clamp(30px, 40%, 80px); 
+    width: clamp(100px, 50%, 200px); 
+    margin: auto; 
+  }
+  &.develop-btn { 
+    grid-area: develop; 
+    width: clamp(115px, 16vw, 350px);
+    height: clamp(50px, 8vh, 80px); 
+    margin-top: auto; 
+    text-align: left;
+  }
+  &.demo-btn { 
+    grid-area: demo;  
+    width: clamp(80px, 60%, 160px); 
+    height: clamp(30px, 40%, 80px); 
+    margin: auto;
+  }
 `;
 
 const HelpText = styled.div`
@@ -290,11 +333,26 @@ const HelpText = styled.div`
   color: #3B3E42;
   text-align: right;
   font-style: italic;
+
+  /* Tablet adjustments */
+  @media (max-width: 650px) {
+    font-size: .55rem;
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 450px) {
+    font-size: .45rem;
+  }
 `;
 
 const BottomInfo = styled.div`
   display: grid;
-  grid-template-rows: 60%;
+  grid-template-rows: 60% 40%;
+
+  /* Tablet adjustments */
+  @media (max-width: 650px) {
+    padding-top: 5%;
+  }
 `;
 
 const ProjectTitle = styled.h1`
@@ -302,11 +360,31 @@ const ProjectTitle = styled.h1`
   color: #3B3E42;
   font-weight: bold;
   text-shadow: -2px 1px rgb(171, 199, 232);
+
+  /* Tablet adjustments */
+  @media (max-width: 650px) {
+    font-size: 1.8rem;
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 450px) {
+    font-size: 1.5rem;
+  }
 `;
 
 const TechStackText = styled.p`
   color: #3B3E42;
   font-size: 0.9rem;
+
+  @media (max-width: 650px) {
+    font-size: .8rem;
+    margin: 0;
+  }
+
+  @media (max-width: 650px) {
+    font-size: .6rem;
+    margin: 0;
+  }
 `;
 
 // Overlay Styles

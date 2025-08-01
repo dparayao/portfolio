@@ -51,12 +51,25 @@ const ProjectCard = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 `;
 
 const ImageContentContainer = styled.div`
-   display: grid;
-   grid-template-columns: 35% 65%;
-   margin: 2%;
+  display: grid;
+  grid-template-columns: 7fr 13fr;
+
+  /* Mobile responsive layout */
+  @media (max-width: 480px) {
+    height: 100%;
+  }
+  
+  /* Very small screens - stack vertically */
+  @media (max-width: 350px) {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    height: 100%;
+  }
 `;
 
 const ImageContainer = styled.div`
@@ -66,6 +79,18 @@ const ImageContainer = styled.div`
   cursor: pointer;
   margin-left: 2%;
   margin-right: 10%;
+
+  @media (max-width: 480px) {
+    height: 100%;
+    margin-left: 1%;
+    margin-right: 5%;
+  }
+  
+  @media (max-width: 350px) {
+    height: 100%;
+    margin: 0;
+    width: 100%;
+  }
 `;
 
 const CoverImage = styled.img`
@@ -106,10 +131,16 @@ const ContentContainer = styled.div`
   padding: 1.5rem;
   flex: 1;
   display: grid;
-  flex-direction: column;
-  grid-template-rows: 60%;
+  grid-template-rows: 50% 50%;
   border: 1px solid rgb(0, 0, 0);
-  background:rgb(240, 240, 240);
+  background: rgb(240, 240, 240);
+  min-width: 0; 
+
+  @media (max-width: 480px) {
+    grid-template-rows: 55% 45%;
+    padding: .5rem; 
+    height: 60%;
+}
 `;
 
 const ProjectTitle = styled.h3`
@@ -117,17 +148,45 @@ const ProjectTitle = styled.h3`
   margin: 2rem 0 0.5rem 0;
   color: #333;
   cursor: pointer;
+  line-height: 1.2;
+  
+  @media (max-width: 480px) {
+    font-size: 1.4rem !important;
+    margin: 1rem 0 0.25rem 0 !important;
+    line-height: 1.1 !important;
+  }
+  
+  @media (max-width: 350px) {
+    font-size: 1.2rem !important;
+    margin: 0.25rem 0 0.25rem 0 !important;
+  }
   
   &:hover {
     color: #0066cc;
   }
 `;
 
+
 const TechStack = styled.p`
   color: #666;
   font-size: 0.9rem;
   margin: 0 0 1rem 0;
   flex: 1;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.4;
+
+  @media (max-width: 480px) {
+    font-size: 0.75rem !important;
+    margin: 0.25rem 0 0.5rem 0 !important;
+    line-height: 1.3 !important;
+  }
+  
+  @media (max-width: 350px) {
+    font-size: 0.7rem !important;
+    margin: 0.25rem 0 0.25rem 0 !important;
+  }
 `;
+
 
 export default ProjectItem;

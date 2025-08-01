@@ -200,3 +200,28 @@ export const getProjectsBasic = gql`
     }
   }
 `
+export const getProjectsOptimized = gql`
+  query getProjectsOptimized($webkitMode: Boolean = false) {
+    projects {
+      id
+      title
+      slug
+      category
+      techStack
+      createdAt
+      
+      # Conditional fields based on browser engine
+      demoMedia @skip(if: $webkitMode) {
+        id
+        file { url }
+        altText
+      }
+      
+      # For WebKit: Load minimal data first, then lazy load media
+      demoMediaBasic: demoMedia @include(if: $webkitMode) {
+        id
+        file { url }
+      }
+    }
+  }
+`;

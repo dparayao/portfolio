@@ -39,7 +39,11 @@ const PortfolioView: React.FC<PortfolioViewProps> = ({ projects }) => {
 // Styled Components
 const PortfolioContainer = styled.div`
   min-height: 100vh;
-  padding: 5%;
+  padding: 5%; /* Add padding for mobile spacing */
+  
+  @media (max-width: 480px) {
+    padding: 2%; /* Reduce padding on mobile */
+  }
 `;
 
 const ProjectsGrid = styled.div`
@@ -48,6 +52,25 @@ const ProjectsGrid = styled.div`
   gap: 2rem;
   max-width: 1200px;
   margin: 0 auto;
+
+  /* WEBKIT OPTIMIZATIONS: */
+  @supports (-webkit-appearance: none) {
+    /* Optimize for WebKit's grid performance */
+    transform: translateZ(0);
+    will-change: transform;
+    contain: layout style;
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    max-width: 100%;
+    
+    /* WebKit mobile optimization */
+    @supports (-webkit-appearance: none) {
+      gap: 0.5rem;
+    }
+  }
 `;
 
 const ProjectItemWrapper = styled.div`
@@ -57,12 +80,21 @@ const ProjectItemWrapper = styled.div`
   width: 70%;
   margin: auto;
   background-color: #D9D9D9; 
+  padding: 2%;
   
   &:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     background-color: #B0D1DF;
   }
+
+  @media (max-width: 480px) {
+    width: 95%; 
+    margin: 0 auto 1rem auto; 
+    padding: 2%;
+    height: 60%;
+  }
+  
 `;
 
 const EmptyState = styled.div`
@@ -70,6 +102,11 @@ const EmptyState = styled.div`
   padding: 4rem;
   color: #666;
   font-size: 1.2rem;
+
+  @media (max-width: 480px) {
+    padding: 2rem;
+    font-size: 1rem;
+  }
 `;
 
 export default PortfolioView;
